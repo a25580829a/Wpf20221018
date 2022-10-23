@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="564" Width="916">
-    <Grid RenderTransformOrigin="0.5,0.5">
+        Title="飲料點餐系統" Height="564" Width="916">
+    <Grid RenderTransformOrigin="0.5,0.5" Margin="0,0,1,0">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="Black"/>
+                <GradientStop Color="#FF90E0D7" Offset="0.993"/>
+                <GradientStop Color="#FF9EC2F3" Offset="0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="37*"/>
             <ColumnDefinition Width="763*"/>
@@ -15,7 +22,7 @@
             <TransformGroup>
                 <ScaleTransform/>
                 <SkewTransform/>
-                <RotateTransform Angle="0.412"/>
+                <RotateTransform Angle="0.122"/>
                 <TranslateTransform/>
             </TransformGroup>
         </Grid.RenderTransform>
@@ -32,12 +39,12 @@
                         <TranslateTransform X="-0.529"/>
                     </TransformGroup>
                 </StackPanel.RenderTransform>
-                <RadioButton x:Name="radioButton" Content="內用" Margin="5,5,5,5" Checked="Radiobutton_Checked"/>
+                <RadioButton x:Name="radioButton" Content="內用" Margin="5,5,5,5" Checked="Radiobutton_Checked" IsChecked="True"/>
                 <RadioButton x:Name="radioButton1" Content="外帶" Margin="5,5,5,5" Checked="Radiobutton_Checked"/>
             </StackPanel>
         </GroupBox>
         <Button x:Name="Order_button" Grid.Column="1" Content="確定訂購" HorizontalAlignment="Left" Height="84" Margin="496,52,0,0" VerticalAlignment="Top" Width="222" Click="Order_button_Click"/>
-        <TextBlock x:Name="displayTextBlock" Grid.Column="1" HorizontalAlignment="Left" Height="354" Margin="470,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="340" Background="#FFBDEAF9"/>
+        <TextBlock x:Name="displayTextBlock" Grid.Column="1" HorizontalAlignment="Left" Height="357" Margin="470,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="340" Background="#FFBDEAF9" FontSize="14"/>
 
     </Grid>
 </Window>

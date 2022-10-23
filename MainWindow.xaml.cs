@@ -114,16 +114,24 @@ namespace WpfApp1
 
         private void Display_Order_Detail(List<Order_item> order)
         {
-            displayTextBlock.Text = $"您所訂購的飲品為:{takeout}";
+            displayTextBlock.Text = $"您所訂購的飲品為:{takeout}\n";
             int total = 0;
-            string message = "";
 
+            int i = 1;
             foreach (Order_item item in order)
             {
                 total += item.Subtotal;
                 Drink drinkitem = drinks[item.Index];
-                
+                displayTextBlock.Text += $"訂購品項:{i} {drinkitem.Name}{drinkitem.Size} X {item.Quantity}杯，每杯{drinkitem.Price}元，小計{item.Subtotal}\n";
+                i++;
             }
+            displayTextBlock.Text += $"未打折的金額為:{total}\n";
+            displayTextBlock.Text += $"獲得的紅利點數(10%):{total / 10}點\n";
+            if (total >= 500 && total < 1000) displayTextBlock.Text += $"折扣後金額:{total / 10 * 9}";
+            else if (total >= 1000) displayTextBlock.Text += $"折扣後金額:{total / 100 * 85}";
+            else displayTextBlock.Text += $"未達金額500元以上 不打折";
+            displayTextBlock.TextAlignment = TextAlignment.Center; 
+            displayTextBlock.Background = Brushes.AntiqueWhite;
         }
 
         private void Place_order(List<Order_item> myOrder)
