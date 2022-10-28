@@ -1,6 +1,10 @@
-﻿using System;
+﻿using CsvHelper;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +28,7 @@ namespace WpfApp1
     {
         List<Drink> drinks = new List<Drink>();
         List<Order_item> order = new List<Order_item>();
-        private string takeout;
+        string takeout;
         public MainWindow()
         {
             InitializeComponent();
@@ -86,12 +90,33 @@ namespace WpfApp1
         */
         private void AddNewDrink(List<Drink> mydrinks)
         {
-            mydrinks.Add(new Drink() { Name = "咖啡", Size = "大杯", Price = 60 });
-            mydrinks.Add(new Drink() { Name = "咖啡", Size = "小杯", Price = 50 });
-            mydrinks.Add(new Drink() { Name = "紅茶", Size = "大杯", Price = 30 });
-            mydrinks.Add(new Drink() { Name = "紅茶", Size = "小杯", Price = 20 });
-            mydrinks.Add(new Drink() { Name = "綠茶", Size = "大杯", Price = 30 });
-            mydrinks.Add(new Drink() { Name = "綠茶", Size = "小杯", Price = 20 });
+            //mydrinks.Add(new Drink() { Name = "咖啡", Size = "大杯", Price = 60 });
+            //mydrinks.Add(new Drink() { Name = "咖啡", Size = "小杯", Price = 50 });
+            //mydrinks.Add(new Drink() { Name = "紅茶", Size = "大杯", Price = 30 });
+            //mydrinks.Add(new Drink() { Name = "紅茶", Size = "小杯", Price = 20 });
+            //mydrinks.Add(new Drink() { Name = "綠茶", Size = "大杯", Price = 30 });
+            //mydrinks.Add(new Drink() { Name = "綠茶", Size = "小杯", Price = 20 });
+
+            OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
+            fileDialog.Filter = "CSV檔案|*.csv|TXT檔案|*.txt|全部檔案|*.*";
+
+            if (fileDialog.ShowDialog() == true)
+            {
+                string path = fileDialog.FileName;
+
+                //string fileContent = File.ReadAllText(path, Encoding.Default);
+
+                StreamReader sr = new StreamReader(path, Encoding.Default);
+                CsvReader csv = new CsvReader(sr , CultureInfo.InvariantCulture);
+
+                csv.Read();
+                csv.ReadHeader();
+                while(csv.Read() == true)
+                {
+                    Drink d = new Drink() {Name = csv.GetField("Name"), Size = csv.GetField("Size"), Price = csv.GetField<int>("Price") };
+                    mydrinks.Add(d);
+                }
+            }
         }
 
 
@@ -114,7 +139,9 @@ namespace WpfApp1
 
         private void Display_Order_Detail(List<Order_item> order)
         {
-            displayTextBlock.Text = $"您所訂購的飲品為:{takeout}\n";
+            displayTextBlock.Text = "" ;
+            displayTextBlock.Inlines.Add(new Run("您所訂購的飲品為:"));
+            displayTextBlock.Inlines.Add(new Bold(new Run($"{takeout}\n")));
             int total = 0;
 
             int i = 1;
@@ -122,16 +149,19 @@ namespace WpfApp1
             {
                 total += item.Subtotal;
                 Drink drinkitem = drinks[item.Index];
-                displayTextBlock.Text += $"訂購品項:{i} {drinkitem.Name}{drinkitem.Size} X {item.Quantity}杯，每杯{drinkitem.Price}元，小計{item.Subtotal}\n";
+                displayTextBlock.Inlines.Add(new Run($"訂購品項:{i} {drinkitem.Name}{drinkitem.Size} X {item.Quantity}杯，每杯{drinkitem.Price}元，小計{item.Subtotal}\n")) ;
                 i++;
             }
-            displayTextBlock.Text += $"未打折的金額為:{total}\n";
-            displayTextBlock.Text += $"獲得的紅利點數(10%):{total / 10}點\n";
-            if (total >= 500 && total < 1000) displayTextBlock.Text += $"折扣後金額:{total / 10 * 9}";
-            else if (total >= 1000) displayTextBlock.Text += $"折扣後金額:{total / 100 * 85}";
-            else displayTextBlock.Text += $"未達金額500元以上 不打折";
+            displayTextBlock.Inlines.Add(new Run($"未打折的金額為:{total}\n"));
+            displayTextBlock.Inlines.Add(new Run($"獲得的紅利點數(10%):{total / 10}點\n"));
+            if (total >= 500 && total < 1000) displayTextBlock.Inlines.Add(new Run($"折扣後金額:{total / 10 * 9}"));
+            else if (total >= 1000) displayTextBlock.Inlines.Add(new Run($"折扣後金額:{total / 100 * 85}"));
+            else displayTextBlock.Inlines.Add(new Run($"未達金額500元以上 不打折"));
             displayTextBlock.TextAlignment = TextAlignment.Center; 
             displayTextBlock.Background = Brushes.AntiqueWhite;
+            StreamWriter sw = new StreamWriter("價格明細.txt");
+            sw.WriteLine(displayTextBlock.Text);
+            sw.Close();
         }
 
         private void Place_order(List<Order_item> myOrder)
