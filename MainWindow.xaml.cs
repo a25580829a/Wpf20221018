@@ -159,6 +159,16 @@ namespace WpfApp1
             else displayTextBlock.Inlines.Add(new Run($"未達金額500元以上 不打折"));
             displayTextBlock.TextAlignment = TextAlignment.Center; 
             displayTextBlock.Background = Brushes.AntiqueWhite;
+
+            SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            saveFileDialog.Filter = "CSV檔案|*.csv|TXT檔案|*.txt|全部檔案|*.*";           
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                StreamWriter sww = new StreamWriter(saveFileDialog.FileName);
+                sww.WriteLine(displayTextBlock.Text);
+                sww.Close();
+            }
+
             StreamWriter sw = new StreamWriter("價格明細.txt");
             sw.WriteLine(displayTextBlock.Text);
             sw.Close();
